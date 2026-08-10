@@ -79,6 +79,12 @@ ningún componente ni activar nada a mano.
 
 El tiempo de lectura se calcula solo (conteo de palabras), no se captura.
 
+> Si acabas de agregar el primer archivo `.mdx` a `src/content/notas/` y
+> `npm run dev` no lo detecta de inmediato, reinicia el servidor
+> (`Ctrl+C` y `npm run dev` de nuevo). Es una particularidad del watcher de
+> contenido con archivos nuevos — `npm run build` siempre sincroniza en
+> limpio, así que no afecta al sitio publicado.
+
 ## Actualizar el CV
 
 Reemplaza `public/cv.pdf` por el archivo nuevo, mismo nombre. Se sirve tal
