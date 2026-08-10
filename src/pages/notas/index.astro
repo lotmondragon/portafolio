@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BackNav from '../../components/BackNav.astro';
+import NoteRow from '../../components/NoteRow.astro';
+import { getPublishedNotes } from '../../lib/notes';
+import { site } from '../../lib/site';
+
+const notas = await getPublishedNotes();
+---
+
+<BaseLayout title={`Notas — ${site.name}`} description="Notas técnicas de Lot Mondragón.">
+  <BackNav slot="nav" />
+
+  <div class="container">
+    <h1>Notas</h1>
+    {
+      notas.length > 0 ? (
+        <div class="rows">
+          {notas.map((n) => <NoteRow entry={n} />)}
+        </div>
+      ) : (
+        <p class="empty">Todavía no hay notas publicadas.</p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: var(--col-text);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  h1 {
+    font-size: var(--fs-49);
+    line-height: var(--lh-heading-lg);
+    /* 112px/64px: valores literales del mockup, fuera de la escala de 9 pasos */
+    padding: 112px 0 64px;
+  }
+
+  .rows {
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-7);
+  }
+
+  .empty {
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    color: var(--color-meta);
+    padding-bottom: var(--space-7);
+  }
+</style>
