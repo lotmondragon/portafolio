@@ -1,43 +1,161 @@
-# Astro Starter Kit: Minimal
+# Portafolio — Lot Mondragón
+
+Sitio de portafolio personal. Astro (TypeScript strict), MDX vía content
+collections, CSS plano con custom properties para el sistema de diseño. Cero
+JavaScript excepto el toggle de tema.
+
+## Correr en local
+
+Requiere Node 22.12 o superior.
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Abre `http://localhost:4321`.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npm run build     # build de producción a ./dist
+npm run preview   # sirve ese build localmente
+npx astro check   # chequeo de tipos
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Agregar un proyecto
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Cada proyecto es un archivo en `src/content/proyectos/`, nombrado
+`NN-slug.mdx` (el prefijo `NN-` solo ordena los archivos en el filesystem;
+la URL pública sale del slug, sin el prefijo — `02-adminsme-mexico.mdx` se
+sirve en `/proyectos/adminsme-mexico/`).
 
-Any static assets, like images, can be placed in the `public/` directory.
+Copia uno de los archivos existentes como plantilla. El schema completo
+(`src/content.config.ts`) es:
 
-## 🧞 Commands
+```ts
+titulo: string
+numero: string          // "01", "02"... para el índice de la home
+anio: number
+rol: string
+stack: string[]
+estado: string
+enlaces: { repo?, sitio?, caseStudy? }   // urls, todas opcionales
+resumen: string
+problema: string[]      // uno o más párrafos
+decisiones: {
+  titulo, contexto, opciones, eleccion, costo: string
+}[]
+capturas: {              // opcional — si se omite, la sección no se renderiza
+  src: image, alt: string, pie?: string,
+  tipo: 'antes' | 'despues' | 'completa'
+}[]
+resultado: string[]
+```
 
-All commands are run from the root of the project, from a terminal:
+Notas sobre `capturas`:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- Las imágenes van en `src/assets/screenshots/<proyecto>/` y se referencian
+  con ruta relativa (`../../assets/screenshots/...`) — nunca remotas.
+- Un `tipo: 'antes'` seguido de un `tipo: 'despues'` se muestra como par
+  lado a lado (apilado en móvil). Cualquier otro caso (`completa`, o un
+  `antes`/`despues` sin pareja) se muestra a ancho completo.
+- `alt` es obligatorio y tiene que describir la imagen, no decir "captura
+  de pantalla".
+- Si el proyecto no tiene capturas todavía, omite el campo por completo —
+  la sección simplemente no aparece.
 
-## 👀 Want to learn more?
+## Agregar una nota
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```sh
+cp src/content/notas/_ejemplo.mdx.txt src/content/notas/mi-nota.mdx
+```
+
+Edita el frontmatter (`titulo`, `fecha`, `resumen`, `borrador`) y escribe la
+nota en Markdown debajo. Mientras `borrador: true`, la nota se ve en
+`npm run dev` pero no se publica (`npm run build` la excluye).
+
+En cuanto haya al menos una nota con `borrador: false`, el enlace "Notas" en
+la navegación y la sección de la home aparecen solos — no hay que tocar
+ningún componente ni activar nada a mano.
+
+El tiempo de lectura se calcula solo (conteo de palabras), no se captura.
+
+## Actualizar el CV
+
+Reemplaza `public/cv.pdf` por el archivo nuevo, mismo nombre. Se sirve tal
+cual en `/cv.pdf` y es el destino del enlace "CV en PDF ↓" de la home.
+
+## Actualizar la imagen OG
+
+Hay una sola imagen Open Graph para todo el sitio (`public/og.png`),
+generada a partir de un layout en `scripts/generate-og.mjs` que usa los
+mismos tokens de color y tipografía que el resto del sitio. Si cambias el
+copy o el diseño de esa imagen:
+
+```sh
+npm run generate-og
+```
+
+## Dependencias y por qué están
+
+- **Astro** — SSG con content collections nativas y cero JS por defecto.
+- **@astrojs/mdx** — las notas y proyectos son `.mdx`.
+- **@astrojs/sitemap** — genera `sitemap-index.xml`.
+- **@fontsource-variable/fraunces**, **@fontsource/instrument-sans**,
+  **@fontsource/jetbrains-mono** — las tres fuentes del sistema,
+  autoalojadas (sin Google Fonts por CDN). Fraunces se usa en su build
+  variable para conservar el eje óptico (`opsz`) que el diseño original usa
+  vía Google Fonts variable.
+- **satori**, **@resvg/resvg-js**, **wawoff2** (solo `devDependencies`) —
+  usadas únicamente por `scripts/generate-og.mjs` para renderizar la imagen
+  OG estática con las fuentes reales del sistema. No se incluyen en el
+  bundle del sitio ni se ejecutan en producción.
+- El resto de la interactividad (`astro:assets` para imágenes, el toggle de
+  tema) no requiere ninguna librería adicional — es un `<script>` de
+  cliente de ~15 líneas, sin isla de framework.
+
+## Desplegar en Vercel
+
+El sitio es 100% estático — no necesita variables de entorno ni runtime de
+servidor.
+
+```sh
+npm i -g vercel   # si no lo tienes
+vercel login
+vercel            # deploy de preview, la primera vez pregunta y crea el proyecto
+vercel --prod     # deploy de producción
+```
+
+O desde el dashboard de Vercel: **Add New → Project**, importa el
+repositorio `lotmondragon/portafolio` — Vercel detecta Astro
+automáticamente (framework preset "Astro", build command `astro build`,
+output `dist`). No hace falta tocar nada más.
+
+### Conectar un dominio propio
+
+El sitio se desplegó inicialmente sin dominio propio, en el subdominio
+`*.vercel.app`. Cuando tengas un dominio:
+
+1. En el dashboard del proyecto → **Settings → Domains** → agrega el
+   dominio.
+2. Sigue las instrucciones de Vercel para apuntar los DNS (un registro `A`
+   a la IP de Vercel, o un `CNAME` si es un subdominio) desde donde
+   compraste el dominio.
+3. Actualiza `astro.config.mjs`: cambia la constante `site` al dominio
+   nuevo (se usa para generar URLs canónicas, el sitemap y las etiquetas
+   Open Graph). Redeploy.
+
+## Estructura
+
+```
+src/
+  content.config.ts      # schemas de proyectos y notas
+  content/
+    proyectos/*.mdx
+    notas/*.mdx
+  components/             # piezas de UI reutilizables
+  layouts/                 # BaseLayout, ProjectLayout, NoteLayout
+  pages/                   # rutas del sitio
+  lib/                     # config central + helpers (notas publicadas, slugs, etc.)
+  styles/                  # tokens.css, reset.css, base.css, fonts.css, article.css
+  assets/                  # logos y capturas, optimizados por astro:assets
+```
