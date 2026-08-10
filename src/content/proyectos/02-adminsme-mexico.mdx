@@ -1,0 +1,109 @@
+---
+titulo: AdminSME México
+numero: "02"
+anio: 2026
+rol: Full-stack · líder técnico
+stack:
+  - NestJS
+  - Prisma
+  - PostgreSQL
+  - Redis
+  - BullMQ
+  - React
+estado: En desarrollo activo, código propietario, case study público
+enlaces:
+  caseStudy: https://github.com/lotmondragon/adminsme-case-study
+resumen: >-
+  ERP financiero para PyMEs mexicanas con cumplimiento fiscal CFDI 4.0 y un
+  pipeline de timbrado que puede reintentarse sin duplicar.
+problema:
+  - >-
+    Las PyMEs mexicanas viven entre hojas de cálculo y el portal del SAT.
+    Desde la reforma de CFDI 4.0, prácticamente cada venta tiene que
+    timbrarse electrónicamente ante un proveedor autorizado antes de ser
+    válida ante la autoridad fiscal — una factura que solo existe en un PDF
+    o en una hoja de cálculo no es una factura real para el SAT. A eso se
+    suma un calendario corriente de obligaciones mensuales y bimestrales
+    (IVA, ISR provisional, declaraciones informativas), reglas de nómina
+    que mezclan retención fiscal con aportaciones de seguridad social, y el
+    riesgo de operar con un proveedor que el SAT haya listado, lo que puede
+    volver no deducible un gasto legítimo sin que nadie lo note a tiempo.
+  - >-
+    Una PyME típica no tiene un contralor, un especialista en nómina y un
+    abogado fiscal en plantilla. Tiene un contador externo trabajando con
+    lo que la empresa le entrega — casi siempre una mezcla desconectada de
+    portal de facturación, hoja de cálculo y estados de cuenta, conciliada
+    después de los hechos, una vez al mes, bajo presión de fecha límite.
+    AdminSME México parte de que buena parte de ese riesgo es un problema
+    de software, no de personas: facturación, contabilidad, nómina y
+    cumplimiento fiscal deberían vivir en un mismo sistema donde las reglas
+    las aplica la plataforma, no la memoria de alguien.
+decisiones:
+  - titulo: Pipeline de timbrado en cola para nómina, síncrono para factura individual
+    contexto: >-
+      Facturas y recibos de nómina deben timbrarse ante un PAC externo con
+      latencia variable, que puede fallar o expirar. Un reintento nunca
+      debe producir dos documentos timbrados válidos para el mismo
+      registro. Nómina, además, puede generar decenas de recibos a timbrar
+      en un solo periodo de pago.
+    opciones: >-
+      Timbrar todo de forma síncrona dentro de la misma transacción que
+      finaliza el documento, o encolar cada documento como un job
+      independiente y reintentable.
+    eleccion: >-
+      Una factura individual se timbra de forma síncrona, apoyada en el
+      contrato de deduplicación del propio PAC. La nómina reparte un job en
+      cola por recibo (BullMQ/Redis), con el progreso agregado derivado del
+      estado persistido de los documentos, no de la cola.
+    costo: >-
+      El resultado son dos modelos de manejo de fallas distintos para lo
+      que conceptualmente es la misma dependencia externa — más
+      infraestructura operativa (worker, broker) y estados intermedios
+      visibles al usuario (un periodo "en progreso" unos segundos) que el
+      camino síncrono no tiene.
+  - titulo: Separación de estado de servidor y estado de cliente
+    contexto: >-
+      El frontend necesita tanto datos que vienen de la API (facturas,
+      saldos, nómina) como estado que no tiene representación en el
+      servidor (qué modal está abierto, qué pestaña está activa).
+    opciones: >-
+      Un store global único que también cachee respuestas del servidor, o
+      dos herramientas separadas, una por tipo de estado.
+    eleccion: >-
+      TanStack Query es dueño de todo lo que viene de la API — caché,
+      revalidación, reintentos, refetch en segundo plano — y Zustand se
+      reserva para estado sin representación en servidor. Ningún
+      componente guarda su propio loading/error ni hace fetch dentro de un
+      efecto.
+    costo: >-
+      El equipo tiene que entender y mantener dos modelos mentales
+      distintos en vez de uno solo.
+  - titulo: Monolito modular en vez de microservicios
+    contexto: >-
+      39 pantallas, más de 30 entidades relacionales y unos 80 endpoints
+      REST repartidos en facturación, cuentas por cobrar/pagar,
+      conciliación bancaria, contabilidad, nómina y cumplimiento fiscal.
+    opciones: >-
+      Separar el sistema en microservicios por dominio desde el inicio, o
+      construir un monolito con límites de módulo trazados por dominio de
+      negocio, no por frontera de red.
+    eleccion: >-
+      Un solo backend desplegable, con los módulos separados internamente
+      por dominio (ventas, compras, tesorería, nómina, cumplimiento).
+    costo: >-
+      Se renuncia al despliegue y escalado independiente por dominio que sí
+      ofrecen los microservicios, a cambio de mantener la complejidad
+      operativa acotada mientras el sistema todavía no tiene un cliente de
+      pago en producción.
+resultado:
+  - >-
+    Todos los módulos planeados están construidos de punta a punta y
+    cubiertos por pruebas automatizadas (unitarias para lógica pura, de
+    integración contra base de datos y caché reales para el resto),
+    verificados contra una instancia corriendo, no solo contra la suite en
+    aislamiento. Queda pendiente el cierre de periodo contable (el concepto
+    existe en el modelo de datos, el flujo de cierre no se construyó),
+    algunos formatos de archivo gubernamental sin validar byte a byte
+    contra la especificación oficial, y no hay todavía un despliegue en la
+    nube ni un cliente de pago en producción.
+---

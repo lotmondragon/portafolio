@@ -1,0 +1,27 @@
+---
+titulo: "Título de la nota, tal como debe verse publicado"
+fecha: 2026-01-15
+resumen: >-
+  Uno o dos renglones que resumen la nota. Aparece en el índice de /notas y
+  en la sección "Notas" del home.
+borrador: true
+---
+
+Escribe la nota en Markdown/MDX normal a partir de aquí. El tiempo de
+lectura se calcula solo, contando palabras — no hay que capturarlo.
+
+## Usa h2 para las secciones principales
+
+Y h3 si necesitas un nivel más abajo. No saltes de h2 a h4 directamente.
+
+Para publicar esta nota:
+
+1. Copia este archivo a `src/content/notas/mi-nota.mdx` (quítale el `.txt`
+   del final — esa extensión es justo lo que hace que esta plantilla no
+   cuente como una nota real).
+2. Cambia `borrador: true` a `borrador: false` cuando esté lista. Mientras
+   sea `true`, la nota se ve en `astro dev` pero no aparece en el sitio
+   publicado (`astro build`).
+3. En cuanto haya al menos una nota con `borrador: false`, el enlace
+   "Notas" en la navegación y la sección §04 del home aparecen solos — no
+   hay que tocar ningún componente.

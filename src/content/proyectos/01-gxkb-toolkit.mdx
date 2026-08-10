@@ -1,0 +1,92 @@
+---
+titulo: gxkb-toolkit
+numero: "01"
+anio: 2026
+rol: Autor único · código abierto
+stack:
+  - TypeScript
+  - Node.js
+  - CLI
+  - Análisis estático
+estado: Código abierto, público
+enlaces:
+  repo: https://github.com/lotmondragon/gxkb-toolkit
+resumen: >-
+  Herramienta que extrae una Knowledge Base completa de GeneXus a un proyecto
+  de código navegable, habilitando Git, pruebas automatizadas y asistentes de
+  IA sobre bases de código que el entorno nativo mantiene cerradas.
+problema:
+  - >-
+    GeneXus guarda una aplicación entera —transacciones, procedimientos, web
+    panels, reglas de negocio, código de eventos— dentro de una Knowledge
+    Base cerrada. No hay un archivo por objeto al que apuntar con un IDE
+    normal, no hay diff granular, no hay forma de correr una suite de
+    pruebas contra la lógica, y no hay manera de poner un asistente de IA a
+    trabajar sobre "el código" — porque fuera de GeneXus, ese código como
+    proyecto navegable no existe.
+  - >-
+    El export .xpz es la única vía de escape, pero es un blob XML denso, no
+    un proyecto. Construí gxkb-toolkit para convertir ese blob en uno:
+    parseo el export, reconstruyo la estructura como archivos Markdown
+    navegables por objeto más un manifest.json, y a partir de ahí sí hay
+    Git, hay pruebas, y hay algo que un asistente de IA puede leer.
+decisiones:
+  - titulo: Partir del export .xpz, no leer la Knowledge Base directamente
+    contexto: >-
+      GeneXus no expone la KB como archivos; la única salida disponible
+      fuera del entorno es el export .xpz, un ZIP con XML denso y en dos
+      formatos incompatibles según la versión (GX9 y GX18).
+    opciones: >-
+      Conectar directamente a la base de datos interna de la KB, o partir
+      del export .xpz que GeneXus ya sabe generar.
+    eleccion: >-
+      Parsear el .xpz: detectar el formato (GX9 o GX18) automáticamente,
+      descifrar la codificación declarada (casi siempre iso-8859-1 o
+      windows-1252, no UTF-8), y normalizar ambos formatos a una sola
+      representación por objeto.
+    costo: >-
+      La herramienta depende del formato de export y de que el usuario lo
+      genere manualmente desde GeneXus — no hay una vía de extracción en
+      vivo contra la KB.
+  - titulo: Salida pensada para asistentes de IA, no solo para lectura humana
+    contexto: >-
+      El objetivo no era solo que un humano pudiera leer el código
+      generado, sino que un agente de IA pudiera orientarse en el proyecto
+      sin contexto adicional.
+    opciones: >-
+      Generar solo el manifest.json estructurado, o generar también un
+      Markdown legible por objeto con instrucciones explícitas.
+    eleccion: >-
+      Cada objeto se renderiza como un archivo Markdown (atributos, reglas,
+      eventos, parámetros, fuente) más un manifest.json con los mismos
+      datos en JSON, y un AI_INSTRUCTIONS.md que explica cómo interpretar
+      la extracción.
+    costo: >-
+      Mantener dos representaciones del mismo dato (Markdown y JSON)
+      duplica el trabajo de renderizado y hay que mantenerlas
+      sincronizadas.
+  - titulo: Alcance acotado a extracción, sin reimportar
+    contexto: >-
+      Una vez que el código vive fuera de la KB, la tentación es cerrar el
+      círculo: editar el Markdown y reimportarlo a GeneXus.
+    opciones: >-
+      Construir también el camino de reimportación, o limitar el alcance a
+      extracción de lectura.
+    eleccion: >-
+      gxkb-toolkit solo extrae. folio-solver (experimental, paquete
+      separado) genera un .xpz de propuesta a partir de un ticket de
+      soporte, pero el flujo de reimportar sigue siendo manual y
+      deliberado.
+    costo: >-
+      No hay un ciclo completo de ida y vuelta automatizado; reimportar
+      sigue siendo un paso manual fuera de la herramienta.
+resultado:
+  - >-
+    Estable para xpz-extract, probado contra formatos de exportación de
+    GeneXus 9 y GeneXus 18. Cubre los tipos de objeto más comunes
+    (Transaction, Procedure, WebPanel, WorkPanel, Report, SDT, DataProvider,
+    Table, Domain, BusinessComponent, ExternalObject, WebService, Module);
+    cualquier otro tipo cae en un bucket genérico. No infiere claves foráneas
+    entre objetos ni hace streaming de exports muy grandes (100+ MB)
+    todavía — ver el roadmap del repositorio.
+---

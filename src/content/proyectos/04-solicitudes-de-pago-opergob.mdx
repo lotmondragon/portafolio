@@ -1,0 +1,73 @@
+---
+titulo: Solicitudes de Pago — OperGOB
+numero: "04"
+anio: 2025
+rol: Desarrollador único del proyecto
+stack:
+  - GeneXus 18
+  - .NET Framework
+  - Angular
+  - SQL Server
+  - REST
+estado: Código propietario, no publicable
+enlaces: {}
+resumen: >-
+  Modernización del trámite más utilizado del módulo financiero de un ERP
+  gubernamental, presente en la totalidad de la base de clientes. Migración
+  de GeneXus 9 a GeneXus 18 sobre .NET Framework y Angular, con rediseño de
+  interfaz y exposición de la lógica existente como servicios REST.
+problema:
+  - >-
+    El trámite llevaba más de diez años en producción con interfaces
+    generadas por el patrón nativo de la plataforma: visualmente obsoletas,
+    con flujos de captura largos y una base de usuarios que operaba las
+    mismas pantallas desde hacía quince años.
+  - >-
+    Los clientes se quejaban del diseño, pero cualquier cambio brusco en el
+    trámite más usado del sistema tenía un costo operativo alto.
+decisiones:
+  - titulo: Web Panel + User Control en vez del generador por defecto
+    contexto: >-
+      GeneXus 18 genera las vistas automáticamente, con un diseño y una
+      estructura que no se pueden modificar a profundidad.
+    opciones: >-
+      Aceptar el generador, reescribir el módulo completo fuera de la
+      plataforma, o un híbrido.
+    eleccion: >-
+      Conservar el Web Panel con toda su lógica, reglas y eventos, y mover
+      la vista a un User Control escrito a mano como código web.
+    costo: >-
+      Más superficie de código manual que mantener, se pierde parte de la
+      generación automática, y el patrón requiere documentación para que el
+      resto del equipo pueda seguirlo.
+  - titulo: Rediseño con criterio de continuidad
+    contexto: >-
+      Usuarios con quince años de hábito en un proceso de pagos, donde un
+      error operativo tiene consecuencias reales.
+    opciones: >-
+      Rediseño radical y moderno, o modernización conservando la estructura
+      mental existente.
+    eleccion: >-
+      Preservar deliberadamente los anclajes visuales y funcionales que los
+      usuarios ya conocían, y modernizar alrededor de ellos priorizando
+      reducción de clics y claridad.
+    costo: >-
+      El resultado es menos vistoso de lo que podría haber sido, y algunas
+      decisiones de layout heredan limitaciones del diseño original.
+  - titulo: Exponer la lógica existente como REST en vez de reimplementarla
+    contexto: El módulo necesitaba poder integrarse con sistemas externos.
+    opciones: >-
+      Construir servicios nuevos con su propia lógica, o exponer lo que ya
+      existía.
+    eleccion: >-
+      Publicar procedures y transactions existentes como servicios REST,
+      sin duplicar reglas de negocio.
+    costo: >-
+      Los contratos de la API quedan condicionados por la forma de los
+      objetos legacy, no por un diseño de API ideal.
+resultado:
+  - >-
+    Proyecto completado y validado en pruebas de pre-producción. Su
+    liberación quedó condicionada a la homologación visual del resto de los
+    módulos del sistema.
+---

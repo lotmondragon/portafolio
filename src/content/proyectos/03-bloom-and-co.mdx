@@ -1,0 +1,131 @@
+---
+titulo: Bloom & Co
+numero: "03"
+anio: 2026
+rol: Desarrollador full-stack · proyecto de cliente
+stack:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - Sanity CMS
+  - Mercado Pago
+estado: En producción · código privado del cliente · case study público
+enlaces:
+  sitio: https://bloom-co-xi.vercel.app
+  caseStudy: https://github.com/lotmondragon/bloom-and-co-case-study
+resumen: >-
+  E-commerce para una floristería que vendía exclusivamente por mensajería
+  manual. Checkout sin registro de cuenta, catálogo autogestionable por las
+  dueñas, confirmación de pago por webhook.
+problema:
+  - >-
+    El negocio operaba enteramente por WhatsApp: una clienta mandaba la
+    foto de un arreglo que le gustaba, las dueñas confirmaban disponibilidad
+    y precio a mano, negociaban los detalles de entrega en varios mensajes,
+    y solo después pedían el pago por una transferencia o liga aparte.
+    Funcionaba a bajo volumen, pero cada paso dependía de que alguien
+    estuviera disponible para responder en tiempo real, la disponibilidad
+    nunca era visible para la clienta de entrada, y el cobro era un
+    traspaso manual y propenso a error, sin ningún registro que ligara un
+    pedido específico con un pago específico.
+  - >-
+    El objetivo no era eliminar esa relación conversacional — es parte de
+    la marca — sino sacarla de la parte del embudo donde era pura fricción:
+    ver el catálogo, confirmar un precio y pagar. Los pedidos personalizados
+    y hechos a la medida siguen pasando por WhatsApp a propósito.
+decisiones:
+  - titulo: Checkout sin registro de cuenta
+    contexto: >-
+      No hay usuario, login ni contraseña en ningún punto del flujo; la
+      clienta llena datos de entrega y contacto al momento de pagar.
+    opciones: >-
+      Pedir una cuenta para poder dar seguimiento a pedidos e historial de
+      compra, o dejar el checkout completamente como invitado.
+    eleccion: >-
+      Checkout como invitado: cada campo antes de pagar es una oportunidad
+      de abandonar el carrito, y para una tienda donde la mayoría de las
+      compras son regalos de una sola vez, crear cuenta era exactamente ese
+      tipo de campo.
+    costo: >-
+      No se construye base de clientes ni historial de compra del lado del
+      cliente — se renuncia a cualquier noción de clienta recurrente en el
+      frontend.
+  - titulo: CMS headless para autonomía de las dueñas
+    contexto: >-
+      El catálogo (nombres, precios, fotos, descripciones, qué está
+      destacado) necesitaba poder actualizarse sin depender de un
+      desarrollador.
+    opciones: >-
+      Un catálogo definido en código que requiere despliegue para cada
+      cambio, o un CMS headless que las propias dueñas puedan editar.
+    eleccion: >-
+      El catálogo vive en Sanity CMS, no en el código. Las dueñas agregan,
+      retiran o actualizan precios ellas mismas, sin deploy y sin pedirle
+      nada a un desarrollador.
+    costo: >-
+      Una dependencia externa más y un costo mensual, a cambio de la
+      autonomía operativa.
+  - titulo: Pedidos personalizados por WhatsApp, no por formulario
+    contexto: >-
+      Los arreglos hechos a la medida no encajan en un catálogo de precio
+      fijo.
+    opciones: >-
+      Construir un formulario de cotización dentro del sitio, o mantener
+      ese segmento fuera del checkout y enrutarlo a WhatsApp.
+    eleccion: >-
+      Un botón de WhatsApp presente en todas las pantallas enruta los
+      pedidos personalizados fuera del flujo de checkout — un formulario
+      rígido habría sido la herramienta equivocada para cómo compra
+      realmente este segmento de clientas.
+    costo: >-
+      Ese proceso no queda registrado en el sistema — no hay orden, no hay
+      estado, no hay dato estructurado detrás de esos pedidos.
+  - titulo: Confirmación de pago por webhook, no por el redirect del navegador
+    contexto: >-
+      El pago corre en la página alojada del procesador de pagos, y el
+      navegador regresa al sitio después — pero ese regreso puede pasar
+      antes, después o sin que el pago realmente se haya confirmado.
+    opciones: >-
+      Confirmar el pedido en cuanto el navegador vuelve a la página de
+      confirmación, o esperar la notificación asíncrona del procesador.
+    eleccion: >-
+      El redirect del navegador es solo una cortesía visual para la
+      clienta; el webhook es el único camino que cambia el estado real de
+      una orden (pendiente/pagada/fallida), y la inserción inicial de la
+      orden nunca confía en un precio que venga del navegador.
+    costo: >-
+      Hay que manejar el caso en que el webhook llega tarde o no llega — la
+      página de confirmación tiene que funcionar correctamente en ambos
+      escenarios.
+capturas:
+  - src: ../../assets/screenshots/bloom-and-co/home-desktop.png
+    alt: Página de inicio de Bloom & Co en escritorio, con el catálogo destacado y el botón de WhatsApp visible.
+    pie: Inicio — escritorio
+    tipo: completa
+  - src: ../../assets/screenshots/bloom-and-co/home-mobile.png
+    alt: Página de inicio de Bloom & Co en vista móvil.
+    pie: Inicio — móvil
+    tipo: completa
+  - src: ../../assets/screenshots/bloom-and-co/catalogo-desktop.png
+    alt: Catálogo de arreglos florales en escritorio, editable por las dueñas desde el CMS.
+    pie: Catálogo — escritorio
+    tipo: completa
+  - src: ../../assets/screenshots/bloom-and-co/catalogo-mobile.png
+    alt: Catálogo de arreglos florales en vista móvil.
+    pie: Catálogo — móvil
+    tipo: completa
+  - src: ../../assets/screenshots/bloom-and-co/arreglo-desktop.png
+    alt: Página de detalle de un arreglo floral individual en escritorio.
+    pie: Detalle de arreglo — escritorio
+    tipo: completa
+  - src: ../../assets/screenshots/bloom-and-co/arreglo-mobile.png
+    alt: Página de detalle de un arreglo floral individual en vista móvil.
+    pie: Detalle de arreglo — móvil
+    tipo: completa
+resultado:
+  - >-
+    En producción para la clienta. Código privado, propiedad de la clienta;
+    el case study de arquitectura y decisiones es público. La fotografía de
+    producto en las capturas es de prueba — la clienta todavía no entregaba
+    fotos reales de producto al momento de escribir el case study.
+---
