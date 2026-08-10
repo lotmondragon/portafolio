@@ -1,0 +1,191 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import BackNav from '../components/BackNav.astro';
+import ProjectMeta from '../components/ProjectMeta.astro';
+import DecisionBlock from '../components/DecisionBlock.astro';
+import Gallery from '../components/Gallery.astro';
+import { getSortedProjects, projectSlug } from '../lib/projects';
+import { site } from '../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'proyectos'>;
+}
+
+const { entry } = Astro.props;
+const { titulo, numero, resumen, problema, decisiones, capturas, resultado } = entry.data;
+
+const all = await getSortedProjects();
+const idx = all.findIndex((p) => p.id === entry.id);
+const next = all[(idx + 1) % all.length];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: titulo,
+  description: resumen,
+  author: { '@type': 'Person', name: site.name, url: site.github },
+};
+---
+
+<BaseLayout title={`${titulo} — ${site.name}`} description={resumen} jsonLd={jsonLd}>
+  <BackNav slot="nav" />
+
+  <div class="container">
+    <div class="title-block">
+      <div class="eyebrow">§ {numero}</div>
+      <div>
+        <h1>{titulo}</h1>
+        <p class="dek">{resumen}</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <ProjectMeta entry={entry} />
+      <div class="content">
+        <h2 class="section-heading">El problema</h2>
+        {problema.map((p) => <p class="paragraph">{p}</p>)}
+
+        <h2 class="section-heading section-heading--spaced">Decisiones técnicas</h2>
+        {decisiones.map((d) => <DecisionBlock {...d} />)}
+      </div>
+    </div>
+
+    {
+      capturas.length > 0 && (
+        <div class="full-section">
+          <h2 class="section-heading">Capturas</h2>
+          <Gallery capturas={capturas} />
+        </div>
+      )
+    }
+
+    <div class="full-section">
+      <h2 class="section-heading">Resultado</h2>
+      <div class="content">
+        {resultado.map((p) => <p class="paragraph">{p}</p>)}
+      </div>
+    </div>
+
+    <a class="next" href={`/proyectos/${projectSlug(next.id)}/`}>
+      <span class="next-label">Siguiente · {next.data.numero}</span>
+      <span class="next-title">{next.data.titulo} →</span>
+    </a>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .title-block {
+    display: grid;
+    grid-template-columns: var(--col-margin) var(--col-text);
+    gap: var(--grid-gap);
+    /* 112px/64px: valores literales del mockup, fuera de la escala de 9 pasos */
+    padding: 112px 0 64px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: 0.08em;
+    color: var(--color-meta);
+    line-height: var(--lh-meta);
+  }
+
+  h1 {
+    font-size: var(--fs-49);
+    line-height: var(--lh-heading-lg);
+    max-width: 16ch;
+  }
+
+  .dek {
+    font-family: var(--font-body);
+    font-size: var(--fs-20);
+    line-height: var(--lh-body-lg);
+    color: var(--color-ink-body);
+    margin-top: var(--space-4);
+    max-width: 60ch;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: var(--col-margin) var(--col-text);
+    gap: var(--grid-gap);
+    padding-bottom: var(--space-7);
+  }
+
+  .section-heading {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--fs-12);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-meta);
+    margin-bottom: var(--space-3);
+  }
+
+  .section-heading--spaced {
+    margin-top: var(--space-6);
+  }
+
+  .paragraph {
+    font-family: var(--font-body);
+    font-size: var(--fs-16);
+    line-height: var(--lh-body);
+    color: var(--color-ink-body);
+    max-width: 68ch;
+  }
+
+  .paragraph + .paragraph {
+    margin-top: var(--space-3);
+  }
+
+  .full-section {
+    padding-bottom: var(--space-7);
+  }
+
+  .next {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: inherit;
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-5) 0 var(--space-7);
+    transition: opacity var(--duration-color) var(--ease);
+  }
+
+  .next:hover {
+    opacity: 0.62;
+  }
+
+  .next-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: 0.08em;
+    color: var(--color-meta);
+  }
+
+  .next-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-31);
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 768px) {
+    .title-block,
+    .body-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+      padding-top: var(--space-6);
+    }
+
+    h1 {
+      font-size: var(--fs-39);
+    }
+  }
+</style>

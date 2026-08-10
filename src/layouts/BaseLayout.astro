@@ -1,0 +1,60 @@
+---
+import Seo from '../components/Seo.astro';
+import SkipLink from '../components/SkipLink.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/reset.css';
+import '../styles/tokens.css';
+import '../styles/fonts.css';
+import '../styles/base.css';
+
+import frauncesLatinUrl from '@fontsource-variable/fraunces/files/fraunces-latin-standard-normal.woff2?url';
+import instrumentLatinUrl from '@fontsource/instrument-sans/files/instrument-sans-latin-400-normal.woff2?url';
+import jetbrainsLatinUrl from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonLd?: Record<string, any> | Record<string, any>[];
+}
+
+const { title, description, image, jsonLd } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preload" as="font" type="font/woff2" href={frauncesLatinUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={instrumentLatinUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={jetbrainsLatinUrl} crossorigin />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <Seo title={title} description={description} image={image} jsonLd={jsonLd} />
+  </head>
+  <body>
+    <SkipLink />
+    <slot name="nav" />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
