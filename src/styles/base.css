@@ -1,0 +1,58 @@
+/* Defaults globales de tipografía, color y accesibilidad de movimiento/foco.
+   El tamaño de cada encabezado NO se fija aquí: en este sistema un <h1>
+   mide 61px en home y 49px en una página de proyecto — el tamaño es
+   contextual, la semántica del tag no. Cada componente/página define su
+   propio font-size con los tokens --fs-*. */
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-16);
+  line-height: var(--lh-body);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-ink);
+}
+
+p {
+  color: var(--color-ink-body);
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Foco visible como decisión de diseño: halo verde, nunca el outline por
+   defecto del navegador. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+[tabindex]:not([tabindex='-1']):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-focus-offset),
+    0 0 0 4px var(--color-focus-ring);
+  border-radius: var(--radius-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

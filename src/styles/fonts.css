@@ -1,0 +1,23 @@
+/**
+ * Fuentes autoalojadas vía @fontsource — sin llamadas a Google Fonts CDN.
+ * Fraunces se importa como variable (eje óptico opsz + peso wght) para
+ * conservar el corte automático por tamaño que el sistema usa en display.
+ * Instrument Sans y JetBrains Mono solo necesitan los pesos 400 y 500 que
+ * usa el sistema, así que se importan como cortes estáticos (más ligero).
+ * `font-display: swap` ya viene declarado en cada @font-face de fontsource.
+ */
+@import '@fontsource-variable/fraunces/standard.css';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+:root {
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+html {
+  font-optical-sizing: auto;
+}

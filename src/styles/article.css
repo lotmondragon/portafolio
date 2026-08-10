@@ -1,0 +1,106 @@
+/* Tipografía de artículo largo (notas técnicas). No hay pantalla resuelta
+   para esta vista en el archivo de diseño; se construye con los mismos
+   tokens y el mismo componente "enlace en prosa" que sí está documentado
+   en el board de estados de componentes (reposo con guía muted, hover con
+   acento, foco con halo). */
+
+.prose {
+  max-width: 68ch;
+  color: var(--color-ink-body);
+  font-size: var(--fs-16);
+  line-height: var(--lh-body);
+}
+
+.prose > * + * {
+  margin-top: var(--space-3);
+}
+
+.prose h2 {
+  font-size: var(--fs-31);
+  line-height: var(--lh-heading);
+  margin-top: var(--space-7);
+}
+
+.prose h3 {
+  font-size: var(--fs-25);
+  line-height: var(--lh-heading-sm);
+  margin-top: var(--space-5);
+}
+
+.prose p,
+.prose li {
+  color: var(--color-ink-body);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.25em;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li + li {
+  margin-top: var(--space-1);
+}
+
+.prose a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: #b7b4ab;
+  text-underline-offset: 3px;
+  transition: color var(--duration-color) var(--ease);
+}
+
+.prose a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-3);
+  color: var(--color-meta);
+  font-style: normal;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-row-hover);
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: var(--fs-13);
+  line-height: 1.6;
+  background: var(--color-row-hover);
+  border: 1px solid var(--color-border);
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose strong {
+  font-weight: 500;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-6) 0;
+}
+
+.prose img {
+  border: 1px solid var(--color-border);
+}

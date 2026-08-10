@@ -1,0 +1,128 @@
+/**
+ * Tokens del sistema, extraídos literalmente de Portafolio.dc.html
+ * (board "Sistema · tokens · escala · grid" + pantallas resueltas).
+ *
+ * Dos excepciones documentadas explícitamente porque el mockup oscuro no
+ * cubre esos casos (solo cubre hero + índice de proyectos, no Sobre mí /
+ * Experiencia / estados de botón):
+ *   - --color-ink-body-dark: interpolado, no extraído. Mantiene la misma
+ *     relación perceptual que en claro (#33322D está más cerca de la tinta
+ *     que #4A4A45; aquí #C9C7BC se coloca igual de cerca de #EDEBE4 que
+ *     #B5B3AA).
+ *   - --color-accent-hover-dark y --color-active-dark: no hay estados de
+ *     botón ni fila activa documentados en oscuro. Se reutiliza el único
+ *     dato adicional que sí aparece en el mockup oscuro (el acento del CTA
+ *     del hero, oklch(0.68 0.1 155)) como acento de énfasis/hover, en vez
+ *     de inventar un tercer valor sin respaldo.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* — Color — */
+  --color-bg: #faf9f6;
+  --color-ink: #1a1a18;
+  --color-ink-body: #33322d; /* párrafos largos: Sobre mí, El problema, decisiones, experiencia */
+  --color-ink-desc: #4a4a45; /* descripciones cortas: lista de proyectos, resúmenes de nota */
+  --color-meta: #605f59;
+  --color-meta-light: #8a897f;
+  --color-border: #e4e1da;
+  --color-row-hover: #f2efe9;
+  --color-active: #edebe4;
+  --color-disabled-bg: #dddbd3;
+  --color-disabled-text: #9b9a90;
+  --color-accent: oklch(0.42 0.075 155);
+  --color-accent-hover: oklch(0.36 0.07 155);
+  --color-accent-hero: var(--color-accent);
+  --color-focus-ring: var(--color-accent);
+  --color-focus-offset: var(--color-bg);
+
+  /* — Tipografía: familias en fonts.css. Escala base 16, razón 1.25. — */
+  --fs-61: 3.8125rem;
+  --fs-49: 3.0625rem;
+  --fs-39: 2.4375rem;
+  --fs-31: 1.9375rem;
+  --fs-25: 1.5625rem;
+  --fs-20: 1.25rem;
+  --fs-16: 1rem;
+  --fs-13: 0.8125rem;
+  --fs-12: 0.75rem;
+  --fs-11: 0.6875rem;
+  --lh-display: 1.05;
+  --lh-heading-lg: 1.1;
+  --lh-heading: 1.25;
+  --lh-heading-sm: 1.3;
+  --lh-body-lg: 1.5;
+  --lh-body: 1.65;
+  --lh-body-tight: 1.55;
+  --lh-meta: 1.7;
+
+  /* — Espaciado, base 8 — */
+  --space-1: 0.5rem; /* 8 */
+  --space-2: 1rem; /* 16 */
+  --space-3: 1.5rem; /* 24 */
+  --space-4: 2rem; /* 32 */
+  --space-5: 3rem; /* 48 */
+  --space-6: 4rem; /* 64 */
+  --space-7: 6rem; /* 96 */
+  --space-8: 8rem; /* 128 */
+  --space-9: 10rem; /* 160 */
+
+  /* — Grid — */
+  --container-max: 1200px;
+  --container-padding: 40px;
+  --grid-gap: 40px;
+  --col-margin: 200px;
+  --col-text: 680px;
+  --col-wide: 940px;
+
+  /* — Radios: esquinas vivas en todo el sistema; único radio es el halo de foco — */
+  --radius-focus: 2px;
+
+  /* — Movimiento — */
+  --duration-color: 180ms;
+  --duration-opacity: 200ms;
+  --ease: ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-bg: #1a1917;
+    --color-ink: #edebe4;
+    --color-ink-body: #c9c7bc; /* interpolado, ver nota arriba */
+    --color-ink-desc: #b5b3aa;
+    --color-meta: #a6a49b;
+    --color-meta-light: #8a897f;
+    --color-border: #2e2c27;
+    --color-row-hover: #232220;
+    --color-active: #2a2825; /* interpolado, ver nota arriba */
+    --color-disabled-bg: #33322e; /* interpolado, ver nota arriba */
+    --color-disabled-text: #6e6c64; /* interpolado, ver nota arriba */
+    --color-accent: oklch(0.62 0.09 155);
+    --color-accent-hover: oklch(0.68 0.1 155); /* ver nota arriba */
+    --color-accent-hero: oklch(0.68 0.1 155);
+    --color-focus-ring: var(--color-accent);
+    --color-focus-offset: var(--color-bg);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #1a1917;
+  --color-ink: #edebe4;
+  --color-ink-body: #c9c7bc;
+  --color-ink-desc: #b5b3aa;
+  --color-meta: #a6a49b;
+  --color-meta-light: #8a897f;
+  --color-border: #2e2c27;
+  --color-row-hover: #232220;
+  --color-active: #2a2825;
+  --color-disabled-bg: #33322e;
+  --color-disabled-text: #6e6c64;
+  --color-accent: oklch(0.62 0.09 155);
+  --color-accent-hover: oklch(0.68 0.1 155);
+  --color-accent-hero: oklch(0.68 0.1 155);
+  --color-focus-ring: var(--color-accent);
+  --color-focus-offset: var(--color-bg);
+}
