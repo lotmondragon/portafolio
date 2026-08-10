@@ -1,0 +1,108 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  capturas: CollectionEntry<'proyectos'>['data']['capturas'];
+}
+
+const { capturas } = Astro.props;
+
+type Captura = (typeof capturas)[number];
+type Group = { kind: 'pair'; antes: Captura; despues: Captura } | { kind: 'single'; item: Captura };
+
+const groups: Group[] = [];
+for (let i = 0; i < capturas.length; i++) {
+  const current = capturas[i];
+  const next = capturas[i + 1];
+  if (current.tipo === 'antes' && next?.tipo === 'despues') {
+    groups.push({ kind: 'pair', antes: current, despues: next });
+    i++;
+  } else {
+    groups.push({ kind: 'single', item: current });
+  }
+}
+---
+
+{
+  groups.length > 0 && (
+    <div class="gallery">
+      {groups.map((group) =>
+        group.kind === 'pair' ? (
+          <div class="pair">
+            <figure>
+              <span class="tag">Antes</span>
+              <Image src={group.antes.src} alt={group.antes.alt} widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, 50vw" />
+              {group.antes.pie && <figcaption>{group.antes.pie}</figcaption>}
+            </figure>
+            <figure>
+              <span class="tag">Después</span>
+              <Image src={group.despues.src} alt={group.despues.alt} widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, 50vw" />
+              {group.despues.pie && <figcaption>{group.despues.pie}</figcaption>}
+            </figure>
+          </div>
+        ) : (
+          <figure class="full">
+            <Image src={group.item.src} alt={group.item.alt} widths={[600, 1200, 1800]} sizes="100vw" />
+            {group.item.pie && <figcaption>{group.item.pie}</figcaption>}
+          </figure>
+        ),
+      )}
+    </div>
+  )
+}
+
+<style>
+  .gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 768px) {
+    .pair {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 70vh;
+    border: 1px solid var(--color-border);
+    display: block;
+    margin: 0 auto;
+  }
+
+  .full :global(img) {
+    max-height: 80vh;
+  }
+
+  .tag {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-11);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-meta-light);
+    margin-bottom: var(--space-1);
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    color: var(--color-meta);
+    margin-top: var(--space-2);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+import { site } from '../lib/site';
+---
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">{site.name}</a>
+    <a href="/#proyectos" class="back">← Índice</a>
+  </div>
+</header>
+
+<style>
+  .nav {
+    background: color-mix(in oklab, var(--color-bg) 90%, transparent);
+    backdrop-filter: saturate(1.2);
+    -webkit-backdrop-filter: saturate(1.2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: var(--fs-20);
+    color: var(--color-ink);
+  }
+
+  .back {
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    color: var(--color-meta);
+    transition: color var(--duration-color) var(--ease);
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+</style>

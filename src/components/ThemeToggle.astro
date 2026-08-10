@@ -1,0 +1,49 @@
+{/* Único script de cliente del sitio. JS vanilla, sin isla de framework. */}
+<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+  <span class="theme-toggle-label">Oscuro</span>
+</button>
+
+<style>
+  .theme-toggle {
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    letter-spacing: 0.02em;
+    color: var(--color-meta);
+    transition: color var(--duration-color) var(--ease);
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = 'theme';
+
+  function currentTheme(): 'light' | 'dark' {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function init() {
+    const button = document.getElementById('theme-toggle');
+    const label = button?.querySelector('.theme-toggle-label');
+    if (!button || !label) return;
+
+    function render() {
+      const theme = currentTheme();
+      button!.setAttribute('aria-pressed', String(theme === 'dark'));
+      label!.textContent = theme === 'dark' ? 'Claro' : 'Oscuro';
+    }
+
+    button.addEventListener('click', () => {
+      const next: 'light' | 'dark' = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem(STORAGE_KEY, next);
+      render();
+    });
+
+    render();
+  }
+
+  init();
+</script>

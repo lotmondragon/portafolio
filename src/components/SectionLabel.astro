@@ -1,0 +1,29 @@
+---
+interface Props {
+  num: string;
+  label: string;
+  id?: string;
+}
+
+const { num, label, id } = Astro.props;
+---
+
+<h2 class="section-label" id={id}>
+  <span class="num">§ {num}</span>{label}
+</h2>
+
+<style>
+  .section-label {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--fs-12);
+    letter-spacing: 0.08em;
+    line-height: var(--lh-meta);
+    color: var(--color-meta);
+    text-transform: uppercase;
+  }
+
+  .num {
+    display: block;
+  }
+</style>

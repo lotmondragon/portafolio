@@ -1,0 +1,56 @@
+---
+interface Props {
+  titulo: string;
+  contexto: string;
+  opciones: string;
+  eleccion: string;
+  costo: string;
+}
+
+const { titulo, contexto, opciones, eleccion, costo } = Astro.props;
+---
+
+<div class="decision">
+  <h3 class="title">{titulo}</h3>
+  <p class="field"><span class="tag">Contexto</span>{contexto}</p>
+  <p class="field"><span class="tag">Opciones</span>{opciones}</p>
+  <p class="field"><span class="tag">Qué elegí</span>{eleccion}</p>
+  <p class="field"><span class="tag tag-accent">Qué costó</span>{costo}</p>
+</div>
+
+<style>
+  .decision {
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-border);
+    max-width: 68ch;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--fs-20);
+    line-height: var(--lh-heading-sm);
+    color: var(--color-ink);
+  }
+
+  .field {
+    font-family: var(--font-body);
+    font-size: var(--fs-16);
+    line-height: var(--lh-body-tight);
+    color: var(--color-ink-body);
+    margin-top: var(--space-2);
+  }
+
+  .tag {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-11);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-meta);
+    margin-bottom: 4px;
+  }
+
+  .tag-accent {
+    color: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,140 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { site } from '../lib/site';
+
+interface Props {
+  hasNotas: boolean;
+}
+
+const { hasNotas } = Astro.props;
+
+const links = [
+  { href: '#proyectos', label: 'Índice' },
+  { href: '#sobre-mi', label: 'Sobre mí' },
+  { href: '#experiencia', label: 'Experiencia' },
+  ...(hasNotas ? [{ href: '#notas', label: 'Notas' }] : []),
+  { href: '#contacto', label: 'Contacto' },
+];
+---
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">{site.name}</a>
+    <div class="nav-right">
+      <nav class="nav-links" aria-label="Principal">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+      <details class="nav-accordion">
+        <summary>Menú</summary>
+        <div class="nav-accordion-panel">
+          {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </details>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in oklab, var(--color-bg) 90%, transparent);
+    backdrop-filter: saturate(1.2);
+    -webkit-backdrop-filter: saturate(1.2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: var(--fs-20);
+    color: var(--color-ink);
+    flex-shrink: 0;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links a {
+    color: var(--color-meta);
+    transition: color var(--duration-color) var(--ease);
+  }
+
+  .nav-links a:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-accordion {
+    display: none;
+  }
+
+  .nav-accordion summary {
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    letter-spacing: 0.02em;
+    color: var(--color-meta);
+    cursor: pointer;
+  }
+
+  .nav-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-accordion[open] summary {
+    color: var(--color-accent);
+  }
+
+  .nav-accordion-panel {
+    position: absolute;
+    inset-inline: 0;
+    top: 64px;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-2) var(--container-padding) var(--space-4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-accordion-panel a {
+    font-family: var(--font-mono);
+    font-size: var(--fs-16);
+    color: var(--color-ink);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+
+    .nav-accordion {
+      display: block;
+      position: relative;
+    }
+  }
+</style>

@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'proyectos'>;
+}
+
+const { entry } = Astro.props;
+const { rol, anio, stack, estado, enlaces } = entry.data;
+
+const linkLabels: Record<keyof typeof enlaces, string> = {
+  repo: 'Repositorio',
+  sitio: 'Sitio',
+  caseStudy: 'Case study',
+};
+
+const linkEntries = (Object.keys(enlaces) as Array<keyof typeof enlaces>)
+  .filter((key) => enlaces[key])
+  .map((key) => ({ href: enlaces[key] as string, label: linkLabels[key] }));
+---
+
+<aside class="meta">
+  <div>
+    <span class="label">Rol</span><br />{rol}
+  </div>
+  <div>
+    <span class="label">Año</span><br />{anio}
+  </div>
+  <div>
+    <span class="label">Stack</span><br />{stack.join(' · ')}
+  </div>
+  <div>
+    <span class="label">Estado</span><br />{estado}
+  </div>
+  {
+    linkEntries.map(({ href, label }) => (
+      <a class="link" href={href} target="_blank" rel="noreferrer">
+        {label} ↗
+      </a>
+    ))
+  }
+</aside>
+
+<style>
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    line-height: var(--lh-meta);
+    color: var(--color-meta);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 769px) {
+    .meta {
+      position: sticky;
+      top: 88px;
+      height: fit-content;
+    }
+  }
+
+  .label {
+    color: var(--color-meta-light);
+  }
+
+  .link {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent);
+    padding-bottom: 2px;
+    width: fit-content;
+    transition: opacity var(--duration-color) var(--ease);
+  }
+
+  .link:hover {
+    opacity: 0.62;
+  }
+</style>

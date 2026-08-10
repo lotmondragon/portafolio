@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { projectSlug } from '../lib/projects';
+
+interface Props {
+  entry: CollectionEntry<'proyectos'>;
+}
+
+const { entry } = Astro.props;
+const { titulo, numero, resumen, anio, stack } = entry.data;
+---
+
+<a class="row" href={`/proyectos/${projectSlug(entry.id)}/`}>
+  <span class="num">{numero}</span>
+  <span class="body">
+    <span class="name">{titulo}</span>
+    <span class="desc">{resumen}</span>
+    <span class="stack">{stack.join(' · ')}</span>
+  </span>
+  <span class="year">{anio}</span>
+</a>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    grid-template-areas: 'num body year';
+    column-gap: var(--space-3);
+    padding: var(--space-4) var(--space-2);
+    margin: 0 calc(var(--space-2) * -1);
+    border-top: 1px solid var(--color-border);
+    color: inherit;
+    transition: background var(--duration-color) var(--ease);
+  }
+
+  .num {
+    grid-area: num;
+  }
+
+  .body {
+    grid-area: body;
+  }
+
+  .year {
+    grid-area: year;
+  }
+
+  .row:hover {
+    background: var(--color-row-hover);
+  }
+
+  .num,
+  .year {
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    color: var(--color-meta);
+    padding-top: 6px;
+  }
+
+  .year {
+    text-align: right;
+  }
+
+  .body {
+    min-width: 0;
+  }
+
+  .name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--fs-25);
+    line-height: var(--lh-heading-sm);
+    color: var(--color-ink);
+  }
+
+  .desc {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--fs-16);
+    line-height: var(--lh-body-tight);
+    color: var(--color-ink-desc);
+    margin-top: var(--space-2);
+    max-width: 64ch;
+  }
+
+  .stack {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: 0.03em;
+    color: var(--color-meta);
+    margin-top: var(--space-3);
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'num year'
+        'body body';
+      row-gap: var(--space-1);
+    }
+  }
+</style>

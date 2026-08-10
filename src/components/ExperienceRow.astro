@@ -1,0 +1,99 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  period: string;
+  company: string;
+  role: string;
+  detail: string;
+  logo?: ImageMetadata;
+  logoAlt?: string;
+  logoHeight?: number;
+}
+
+const { period, company, role, detail, logo, logoAlt, logoHeight = 28 } = Astro.props;
+---
+
+<div class="row">
+  <div class="period">{period}</div>
+  <div>
+    <div class="company-line">
+      <span class="company">{company}</span>
+      {
+        logo && (
+          <Image src={logo} alt={logoAlt ?? ''} height={logoHeight} class="logo" />
+        )
+      }
+    </div>
+    <div class="role">{role}</div>
+    <p class="detail">{detail}</p>
+  </div>
+</div>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .period {
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    color: var(--color-meta);
+    padding-top: 4px;
+  }
+
+  .company-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .company {
+    font-family: var(--font-display);
+    font-size: var(--fs-20);
+    color: var(--color-ink);
+  }
+
+  .logo {
+    width: auto;
+    filter: grayscale(1);
+    opacity: 0.75;
+    transition:
+      filter var(--duration-opacity) var(--ease),
+      opacity var(--duration-opacity) var(--ease);
+  }
+
+  .row:hover .logo {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+
+  .role {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: 0.04em;
+    color: var(--color-meta);
+    margin-top: var(--space-1);
+  }
+
+  .detail {
+    font-family: var(--font-body);
+    font-size: var(--fs-16);
+    line-height: var(--lh-body-tight);
+    color: var(--color-ink-body);
+    margin-top: var(--space-3);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>
