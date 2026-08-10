@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import Seo from '../components/Seo.astro';
 import SkipLink from '../components/SkipLink.astro';
 import Footer from '../components/Footer.astro';
@@ -42,12 +43,21 @@ const { title, description, image, jsonLd } = Astro.props;
           document.documentElement.dataset.theme = theme;
         } catch (e) {}
       })();
+      // ClientRouter reemplaza <html> en cada transición con el HTML tal
+      // cual del servidor (sin data-theme, porque eso solo lo pone este
+      // script en el cliente) — sin esto, cada navegación entre páginas
+      // resetea el tema. astro:before-swap corre justo antes del swap,
+      // así que copia el tema actual al documento entrante sin flash.
+      document.addEventListener('astro:before-swap', function (event) {
+        event.newDocument.documentElement.dataset.theme = document.documentElement.dataset.theme;
+      });
     </script>
     <link rel="preload" as="font" type="font/woff2" href={frauncesLatinUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={instrumentLatinUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={jetbrainsLatinUrl} crossorigin />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <Seo title={title} description={description} image={image} jsonLd={jsonLd} />
+    <ClientRouter />
   </head>
   <body>
     <SkipLink />

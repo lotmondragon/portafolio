@@ -45,5 +45,8 @@
     render();
   }
 
-  init();
+  // astro:page-load fires on the initial load AND after every ClientRouter
+  // transition — a plain top-level init() would only ever bind to the very
+  // first button node and go silent after navigating away and back.
+  document.addEventListener('astro:page-load', init);
 </script>
