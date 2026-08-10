@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
+import CoordsReadout from '../components/CoordsReadout.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import NoteRow from '../components/NoteRow.astro';
@@ -29,20 +30,22 @@ const jsonLd = {
 
 <BaseLayout title={`${site.name} — Desarrollador de software`} description={site.description} jsonLd={jsonLd}>
   <Nav hasNotas={hasNotas} slot="nav" />
+  <CoordsReadout />
 
   <div class="container">
     <section class="hero">
+      <div class="grid-texture" aria-hidden="true"></div>
       <div class="eyebrow">§ 00<br />Perfil</div>
       <div>
-        <h1>{site.name}</h1>
+        <h1><span class="plot">{site.name}</span></h1>
         <p class="tagline">{site.role}</p>
         <p class="location">{site.location} · Desarrollador en EOS Soluciones · .NET, Angular, SQL Server</p>
         <div class="hero-actions">
-          <a class="cta" href="#proyectos">Ver proyectos →</a>
+          <a class="cta" href="#proyectos">Ver proyectos <span class="arrow">→</span></a>
           <div class="social">
-            <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
-            <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-            <a href={`mailto:${site.email}`}>Correo</a>
+            <a class="link-draw" href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+            <a class="link-draw" href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+            <a class="link-draw" href={`mailto:${site.email}`}>Correo</a>
           </div>
         </div>
       </div>
@@ -61,7 +64,7 @@ const jsonLd = {
         <div class="sidebar-facts">
           <div><span class="label">Ubicación</span><br />Querétaro, MX</div>
           <div><span class="label">Idiomas</span><br />Español (nativo)<br />Inglés (B2)</div>
-          <a class="cv-link" href="/cv.pdf">CV en PDF ↓</a>
+          <a class="cv-link" href="/cv.pdf" data-astro-reload>CV en PDF ↓</a>
         </div>
       </div>
       <div>
@@ -140,8 +143,8 @@ const jsonLd = {
         <h3>¿Tienes un sistema viejo que todavía importa? Hablemos.</h3>
         <p class="email">{site.email}</p>
         <div class="social">
-          <a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+          <a class="link-draw" href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+          <a class="link-draw" href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
         </div>
       </div>
     </section>
@@ -167,9 +170,66 @@ const jsonLd = {
   }
 
   .hero {
+    position: relative;
     border-top: none;
     /* 128/112: valores literales del mockup (128 = --space-8) */
     padding: 128px 0 112px;
+  }
+
+  /* Papel milimetrado sutil detrás del hero — referencia directa al
+     concepto "documentación técnica": el fondo de un plano, no decoración
+     genérica. Se apaga con la máscara antes de tocar el texto. */
+  .grid-texture {
+    position: absolute;
+    inset: -40px -40px auto -40px;
+    height: 420px;
+    background-image:
+      linear-gradient(color-mix(in oklab, var(--color-accent) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 6%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: radial-gradient(ellipse 900px 380px at 12% 15%, black, transparent 72%);
+    mask-image: radial-gradient(ellipse 900px 380px at 12% 15%, black, transparent 72%);
+    pointer-events: none;
+  }
+
+  /* Entrada de una sola vez al cargar — nunca disparada por scroll.
+     El titular se traza como un plóter; el resto sube en cascada corta
+     para no retrasar el LCP. prefers-reduced-motion (base.css) anula
+     `animation` por completo y el estado de reposo ya es visible. */
+  .hero h1 .plot {
+    display: inline-block;
+    clip-path: inset(0 100% 0 0);
+    animation: plot 480ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  @keyframes plot {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .hero .tagline,
+  .hero .location,
+  .hero .hero-actions {
+    animation: rise 380ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .hero .tagline {
+    animation-delay: 120ms;
+  }
+  .hero .location {
+    animation-delay: 190ms;
+  }
+  .hero .hero-actions {
+    animation-delay: 260ms;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   #proyectos {
@@ -235,11 +295,22 @@ const jsonLd = {
     color: var(--color-accent);
     border-bottom: 1.5px solid var(--color-accent);
     padding-bottom: 3px;
+    display: inline-flex;
+    align-items: center;
     transition: opacity var(--duration-opacity) var(--ease);
   }
 
   .cta:hover {
     opacity: 0.62;
+  }
+
+  .cta .arrow {
+    display: inline-block;
+    transition: transform var(--duration-opacity) cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  .cta:hover .arrow {
+    transform: translateX(5px);
   }
 
   .social {

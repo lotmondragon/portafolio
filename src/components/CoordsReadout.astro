@@ -1,0 +1,48 @@
+{/*
+  Segundo (y último) script de cliente del sitio, solo en home. Lector de
+  coordenadas del cursor — un detalle de instrumento técnico, no
+  decorativo, coherente con "documentación técnica, bien tipografiada".
+  Oculto en touch (no hay cursor que leer) y no roba foco ni clics.
+*/}
+<div class="coords" id="coords" aria-hidden="true">x 000 · y 000</div>
+
+<style>
+  .coords {
+    display: none;
+    position: fixed;
+    bottom: var(--space-2);
+    right: var(--space-3);
+    z-index: 30;
+    font-family: var(--font-mono);
+    font-size: var(--fs-11);
+    letter-spacing: 0.04em;
+    color: var(--color-meta-light);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .coords {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  let currentListener: ((e: PointerEvent) => void) | null = null;
+
+  function init() {
+    const el = document.getElementById('coords');
+    if (currentListener) document.removeEventListener('pointermove', currentListener);
+    if (!el) return;
+
+    currentListener = (e: PointerEvent) => {
+      el.textContent = `x ${String(e.clientX).padStart(3, '0')} · y ${String(e.clientY).padStart(3, '0')}`;
+    };
+    document.addEventListener('pointermove', currentListener);
+  }
+
+  // astro:page-load: ver la nota en ThemeToggle.astro — mismo motivo, y
+  // aquí además evita apilar listeners en cada navegación.
+  document.addEventListener('astro:page-load', init);
+</script>

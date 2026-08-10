@@ -22,7 +22,7 @@ const links = [
     <a href="/" class="logo">{site.name}</a>
     <div class="nav-right">
       <nav class="nav-links" aria-label="Principal">
-        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        {links.map((l) => <a class="link-draw" href={l.href}>{l.label}</a>)}
       </nav>
       <details class="nav-accordion">
         <summary>Menú</summary>

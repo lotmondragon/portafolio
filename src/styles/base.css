@@ -23,6 +23,7 @@ h4 {
   font-family: var(--font-display);
   font-weight: 400;
   color: var(--color-ink);
+  text-wrap: balance;
 }
 
 p {
@@ -31,6 +32,31 @@ p {
 
 a {
   text-decoration: none;
+}
+
+/* Subrayado que se traza al hover/foco, en vez de aparecer de golpe.
+   Usa currentColor: sigue el mismo color que ya cambia el propio enlace
+   al hover, sin duplicar esa lógica aquí. */
+.link-draw {
+  position: relative;
+}
+
+.link-draw::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-opacity) var(--ease);
+}
+
+.link-draw:hover::after,
+.link-draw:focus-visible::after {
+  transform: scaleX(1);
 }
 
 /* Foco visible como decisión de diseño: halo verde, nunca el outline por

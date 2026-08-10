@@ -8,14 +8,39 @@ interface Props {
 
 const { entry } = Astro.props;
 const { titulo, numero, resumen, anio, stack } = entry.data;
+
+/** Onda de firma: una polilínea distinta y estable por proyecto, derivada
+ * del slug. Generada en build, cero JS de cliente. No es aleatoria en el
+ * sentido de "cambia cada visita" — es determinística, como una huella. */
+function signaturePoints(seed: string, count = 14, width = 120, height = 20): string {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (Math.imul(h, 31) + seed.charCodeAt(i)) >>> 0;
+  const next = () => {
+    h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
+    return h / 4294967296;
+  };
+  const step = width / (count - 1);
+  const pts: string[] = [];
+  for (let i = 0; i < count; i++) {
+    pts.push(`${Math.round(i * step)},${Math.round(2 + next() * (height - 4))}`);
+  }
+  return pts.join(' ');
+}
+
+const signature = signaturePoints(entry.id);
 ---
 
 <a class="row" href={`/proyectos/${projectSlug(entry.id)}/`}>
-  <span class="num">{numero}</span>
+  <span class="num"><span class="bracket bracket-open" aria-hidden="true">[</span>{numero}<span class="bracket bracket-close" aria-hidden="true">]</span></span>
   <span class="body">
     <span class="name">{titulo}</span>
     <span class="desc">{resumen}</span>
-    <span class="stack">{stack.join(' · ')}</span>
+    <span class="stack-line">
+      <span class="stack">{stack.join(' · ')}</span>
+      <svg class="signature" viewBox="0 0 120 20" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points={signature} fill="none" stroke="currentColor" stroke-width="1.25" />
+      </svg>
+    </span>
   </span>
   <span class="year">{anio}</span>
 </a>
@@ -57,6 +82,37 @@ const { titulo, numero, resumen, anio, stack } = entry.data;
     padding-top: 6px;
   }
 
+  .num {
+    position: relative;
+    transition: color var(--duration-color) var(--ease);
+  }
+
+  .row:hover .num {
+    color: var(--color-accent);
+  }
+
+  .bracket {
+    display: inline-block;
+    color: var(--color-accent);
+    opacity: 0;
+    transition:
+      opacity var(--duration-color) var(--ease),
+      transform var(--duration-color) var(--ease);
+  }
+
+  .bracket-open {
+    transform: translateX(6px);
+  }
+
+  .bracket-close {
+    transform: translateX(-6px);
+  }
+
+  .row:hover .bracket {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
   .year {
     text-align: right;
   }
@@ -83,13 +139,35 @@ const { titulo, numero, resumen, anio, stack } = entry.data;
     max-width: 64ch;
   }
 
+  .stack-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
   .stack {
-    display: block;
     font-family: var(--font-mono);
     font-size: var(--fs-12);
     letter-spacing: 0.03em;
     color: var(--color-meta);
-    margin-top: var(--space-3);
+  }
+
+  .signature {
+    width: 72px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--color-accent);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity var(--duration-opacity) var(--ease),
+      transform var(--duration-opacity) var(--ease);
+  }
+
+  .row:hover .signature {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   @media (max-width: 768px) {
@@ -99,6 +177,10 @@ const { titulo, numero, resumen, anio, stack } = entry.data;
         'num year'
         'body body';
       row-gap: var(--space-1);
+    }
+
+    .signature {
+      display: none;
     }
   }
 </style>
