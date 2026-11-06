@@ -1,0 +1,89 @@
+---
+titulo: ARME-ERP
+numero: "01"
+anio: 2026
+rol: Autor único · proyecto personal
+stack:
+  - .NET 8
+  - C#
+  - ASP.NET Core
+  - EF Core
+  - PostgreSQL
+  - Angular 20
+  - Docker
+estado: Código abierto, público
+enlaces:
+  repo: https://github.com/lotmondragon/arme-erp
+resumen: >-
+  Sistema de gestión para constructoras de naves industriales. API en .NET 8
+  con Clean Architecture y CQRS, servidor de autorización OAuth2/OIDC
+  separado con OpenIddict, frontend en Angular 20, pruebas automatizadas y CI
+  en GitHub Actions.
+problema:
+  - >-
+    Quería un proyecto donde las decisiones de arquitectura de backend en
+    .NET fueran el centro, no un CRUD con controllers que hablan directo con
+    la base de datos: capas con dependencias en una sola dirección, casos de
+    uso testeables sin base de datos y una autenticación que funcionara como
+    en un sistema real, no un token inventado.
+  - >-
+    El dominio —clientes, proyectos de obra, presupuestos y facturas de una
+    constructora— es lo bastante concreto para que esas decisiones tengan
+    consecuencias, y lo bastante acotado para terminar módulos de punta a
+    punta.
+decisiones:
+  - titulo: CQRS con MediatR en vez de una capa de servicios
+    contexto: >-
+      Con un service layer tradicional, cada entidad termina con un
+      ClientService gigante que mezcla lecturas, escrituras y validación.
+    opciones: >-
+      Servicios por entidad, o un comando/query por caso de uso despachado
+      con MediatR.
+    eleccion: >-
+      Un comando o query por caso de uso, cada uno con su handler y, para
+      escrituras, su validador de FluentValidation. Los controllers solo
+      arman el comando y lo despachan.
+    costo: >-
+      Tres archivos por operación en lugar de un método. Se aceptó a cambio
+      de que cada caso de uso sea trivial de ubicar y de probar aislado.
+  - titulo: Servidor de autorización separado de la API
+    contexto: >-
+      En OAuth2/OIDC, quien emite tokens y quien los consume son
+      responsabilidades distintas.
+    opciones: >-
+      Emitir JWTs desde la misma API de negocio, o un servidor OpenIddict
+      independiente.
+    eleccion: >-
+      ArmeErp.AuthServer emite los tokens; la API solo los valida
+      descubriendo la configuración del emisor. La API nunca ve
+      contraseñas.
+    costo: >-
+      Un proceso más que levantar y configurar. La gestión de usuarios
+      todavía es mínima (un usuario de prueba con grant password); el
+      siguiente paso documentado es una tabla de usuarios real y
+      authorization_code + PKCE.
+  - titulo: Repository + Unit of Work sobre EF Core
+    contexto: >-
+      Los handlers necesitaban poder probarse sin una base de datos real.
+    opciones: >-
+      Inyectar el DbContext directamente en los handlers, o depender de una
+      abstracción.
+    eleccion: >-
+      Los handlers dependen solo de IUnitOfWork; las pruebas unitarias lo
+      simulan con Moq. El esquema se genera desde las entidades con
+      migraciones de EF Core, no con SQL a mano.
+    costo: >-
+      Una capa de abstracción extra sobre EF Core, que ya es en sí un
+      Unit of Work.
+resultado:
+  - >-
+    Clientes, proyectos y dashboard funcionan de punta a punta: entidad de
+    dominio, comandos y queries, validación, API REST y consumo real desde
+    Angular con interceptor HTTP y guard de rutas. Pruebas unitarias con
+    xUnit y Moq sobre handlers y validadores, pruebas de integración contra
+    el stack de Docker Compose y CI que compila y prueba en cada push.
+  - >-
+    El README separa explícitamente lo implementado de lo que es solo
+    maqueta o diseño a futuro (presupuestos, facturas y varias pantallas
+    todavía no tienen backend).
+---

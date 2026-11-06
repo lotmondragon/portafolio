@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 
 // Sin dominio propio todavía: se despliega en el subdominio *.vercel.app.
 // Actualiza este valor en cuanto tengas un dominio (ver README → Desplegar).
-const site = process.env.SITE_URL ?? 'https://portafolio-lot-mondragon.vercel.app';
+const site = process.env.SITE_URL ?? 'https://portafolio-blush-ten-37.vercel.app';
 
 // Heurística ligera para no listar /notas en el sitemap mientras la
 // colección esté vacía (solo el archivo plantilla _ejemplo.mdx.txt, que no

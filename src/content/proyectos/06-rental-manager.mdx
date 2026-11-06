@@ -1,0 +1,58 @@
+---
+titulo: Rental Manager
+numero: "06"
+anio: 2026
+rol: Autor único · proyecto personal
+stack:
+  - React Native
+  - Expo
+  - TypeScript
+  - Supabase
+  - PostgreSQL
+  - Zustand
+estado: Código abierto, público
+enlaces:
+  repo: https://github.com/lotmondragon/rental-manager
+resumen: >-
+  App móvil para gestionar propiedades en renta. Los dueños registran
+  propiedades, crean contratos e invitan inquilinos por correo; los inquilinos
+  suben comprobantes de pago. Un mismo usuario puede tener ambos roles.
+problema:
+  - >-
+    Las rentas pequeñas se administran con mensajes y fotos de comprobantes
+    perdidas en un chat. Quería un flujo completo de producto
+    —autenticación, roles, seguridad de datos y notificaciones— y no solo
+    pantallas de CRUD.
+decisiones:
+  - titulo: Un solo usuario con dos roles
+    contexto: >-
+      Es común que alguien rente un departamento y a la vez le rente un
+      cuarto a otra persona.
+    opciones: >-
+      Cuentas separadas por rol, o un usuario que puede ser dueño e
+      inquilino a la vez.
+    eleccion: >-
+      Un solo login con ambos roles y un selector para cambiar de modo; el
+      ruteo decide la vista según si el usuario es dueño, inquilino o ambos.
+    costo: >-
+      Más casos que cubrir en navegación y en las políticas de acceso a
+      datos.
+  - titulo: Seguridad en la base de datos, no solo en la app
+    contexto: >-
+      Con Supabase, el cliente móvil habla directo con Postgres; cualquier
+      regla que viva solo en la app se puede saltar.
+    opciones: >-
+      Validar permisos en la app, o con Row Level Security en cada tabla.
+    eleccion: >-
+      Row Level Security en todas las tablas: un inquilino solo ve sus
+      contratos y pagos, un dueño solo los de sus propiedades.
+    costo: >-
+      Las políticas son más difíciles de depurar que una validación en
+      código, y hay que probarlas explícitamente.
+resultado:
+  - >-
+    Invitaciones por correo con token y vigencia de 7 días, comprobantes de
+    pago en foto o PDF, y avisos por push y correo a 30, 15 y 5 días del
+    vencimiento de contrato mediante Edge Functions y Resend. Incluye un
+    flujo de prueba end-to-end con Maestro.
+---

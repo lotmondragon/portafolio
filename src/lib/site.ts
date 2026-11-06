@@ -8,7 +8,7 @@ export const site = {
   location: 'Querétaro, México',
   email: 'mondragonlot@gmail.com',
   github: 'https://github.com/lotmondragon',
-  linkedin: 'https://www.linkedin.com/in/lot-abraham-mondragon-morales-b80b86273/',
+  linkedin: 'https://www.linkedin.com/in/lotmondragon',
   description:
-    'Portafolio de Lot Mondragón — desarrollador de software en Querétaro, México. Modernización de sistemas empresariales, migraciones GeneXus, ERPs y e-commerce.',
+    'Portafolio de Lot Mondragón — desarrollador de software en Querétaro, México. Modernización de sistemas legacy, backend .NET, Angular, ERPs y e-commerce.',
 } as const;
